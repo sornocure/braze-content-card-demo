@@ -49,6 +49,23 @@
       render_the_banners(banners);
     });
 
+    
+    // Register an event listener
+    braze.subscribeToFeatureFlagsUpdates((features) => {
+      console.log("Features were updated", features);
+      
+      const vip_menu_flag = features.filter(obj=> obj.id==='show_vip_menu');
+       
+      if (Object.keys(vip_menu_flag).length > 0) {
+        render_new_menu(vip_menu_flag);
+      }
+      else {
+        render_default_menu();
+      }
+
+    });
+
+
     // Be sure to call `openSession` after `automaticallyShowInAppMessages`
     braze.openSession();
     
@@ -69,7 +86,7 @@
     <!-- End -- Jumbotron -->
 
     <!-- Tabs -->
-    <div class="col-lg-12">
+    <div id="menu" class="col-lg-12">
       <ul class="nav nav-pills">
         <li class="active"><a data-toggle="pill"
             href="index.html">Home</a></li>
@@ -350,6 +367,28 @@
           }
       }
 
+      function render_default_menu() {
+        console.log("feature flag is 'show_vip_menu', rendering default menu");
+        $("#menu").empty();
+        $("#menu").append("<ul class='nav nav-pills'><li class='active'><a data-toggle='pill' href='index.html'>Home</a></li><li class=''><a data-toggle='pill' href='navigation.html'>Navigation</a></li>        <li class=''><a data-toggle='pill' href='news.html'>News</a></li>        <li class=''><a data-toggle='pill' href='settings.html'><div id='indicator'>Settings</div></a></li>      </ul>");
+      }
+
+      function render_new_menu(ff) {
+        
+        const vip_menu_featureFlag = braze.getFeatureFlag("show_vip_menu");
+        if (vip_menu_featureFlag?.enabled) {
+          
+          // Returns the String property
+          const menu_color = vip_menu_featureFlag.getStringProperty("color");
+          // use new feature
+          $("#menu").empty();
+          $("#menu").append("<ul class='nav nav-pills'><li class='active'><a data-toggle='pill' href='index.html'>Home2</a></li><li class=''><a data-toggle='pill' style='color:" + menu_color + "' href='navigation.html'>Navigation</a></li>        <li class=''><a data-toggle='pill' style='color:" + menu_color + "' href='news.html'>News</a></li>        <li class=''><a data-toggle='pill' style='color:" + menu_color + "' href='settings.html'><div id='indicator'>Settings</div></a></li>      </ul>");
+      
+          braze.logFeatureFlagImpression("show_vip_menu");
+          
+        } 
+      }
+
         // forward/Back controls
       function plusSlides(n) {
         SlideShow(slidePosition);
@@ -402,6 +441,7 @@
         
         render_the_cards(braze.getCachedContentCards().cards);
         console.log("Braze - getCachedContentCards: ", braze.getCachedContentCards().cards);
+
 
         if (localStorage.getItem("bannerrefresh-switch") === 'true') {
           braze.requestBannersRefresh(["top_banner"]);

@@ -121,6 +121,10 @@
               <label for="i0" class="label">Auto requestBannersRefresh();:</label>
               <input type="checkbox" onclick="bannerrefreshswitch();" id="bannerrefresh-switch"/>
             </field>
+          <field class='field' style="width: 50%">
+              <label for="i0" class="label">Auto requestContentCardsRefresh();:</label>
+              <input type="checkbox" onclick="ccrefreshswitch();" id="ccrefresh-switch"/>
+            </field>
           </div>
       </div>
 
@@ -186,6 +190,11 @@
       var checkbox = document.getElementById("bannerrefresh-switch");
       localStorage.setItem("bannerrefresh-switch", checkbox.checked);
       console.log("Banner auto requestBannersRefresh for top_banner:" + checkbox.checked);
+    }
+    function ccrefreshswitch() {
+      var checkbox = document.getElementById("ccrefresh-switch");
+      localStorage.setItem("ccrefresh-switch", checkbox.checked);
+      console.log("Content Cards auto requestContentCardsRefresh on page_load:" + checkbox.checked);
     }
 
     function applyConfig() {
@@ -270,6 +279,12 @@
       }
       else {
           $("#bannerrefresh-switch").prop("checked", false);
+      }
+      if (localStorage.getItem("ccrefresh-switch")=='true'){
+        $("#ccrefresh-switch").prop("checked", true);
+      }
+      else {
+          $("#ccrefresh-switch").prop("checked", false);
       }
       
         

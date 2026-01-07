@@ -439,9 +439,14 @@
         console.log('The user is ' + braze.getUser().getUserId());
         $("#usertag").html("userId: " + braze.getUser().getUserId());
         
-        render_the_cards(braze.getCachedContentCards().cards);
-        console.log("Braze - getCachedContentCards: ", braze.getCachedContentCards().cards);
-
+        if (localStorage.getItem("ccrefresh-switch") === 'true') {
+          braze.requestContentCardsRefresh();
+        }
+        else {
+          render_the_cards(braze.getCachedContentCards().cards);
+          console.log("Braze - getCachedContentCards: ", braze.getCachedContentCards().cards);
+        }
+        
 
         if (localStorage.getItem("bannerrefresh-switch") === 'true') {
           braze.requestBannersRefresh(["top_banner"]);

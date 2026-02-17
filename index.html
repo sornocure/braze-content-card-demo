@@ -106,9 +106,15 @@
       <!-- End -- Spacer -->
 
       <div class="row">
-        <!-- Top banner card -->
+        <!-- Top banner card (standard insertBanner) -->
         <div id="top-banner-container" style="max-height:300px;">
         </div>    
+      </div>
+
+      <div class="row">
+        <!-- Top banner duplicate: headless render (image, title, description like content cards) -->
+        <div id="top-banner-headless-container" style="max-height:300px;">
+        </div>
       </div>
 
       <!-- Spacer -->
@@ -350,20 +356,42 @@
               $("#top-banner-container").empty();
               $("#top-banner-container").append("<div class='MessageInfo'>    1/1 (max-height: 300px) </div><img src='./rs/wireframe_banners2_1250x313.png' style='width:100%'>");
 
+              $("#top-banner-headless-container").empty();
+              $("#top-banner-headless-container").append("<div class='MessageInfo'>    1/1 headless (max-height: 300px) </div><img src='./rs/wireframe_banners2_1250x313.png' style='width:100%'>");
+
               // get this placement's banner. If it's `null` the user did not qualify for one.
               const topBanner = banner_objs["top_banner"];
               if (topBanner) {
-                // Insert the banner which replacees the innerHTML of that container
-                braze.insertBanner(topBanner, document.getElementById("top-banner-container"));
-                  // Special handling if the user is part of a Control Variant
-                  if (topBanner.isControl) {
-                    container.style.display = 'none';
-                  }     
+                // Standard render: insertBanner
+                const standardContainer = document.getElementById("top-banner-container");
+                braze.insertBanner(topBanner, standardContainer);
+                if (topBanner.isControl) {
+                  standardContainer.style.display = 'none';
+                }
+
+                // Headless render: use Banner property methods (image, title, description) like content cards
+                // Property keys depend on your Braze dashboard; adjust if you use different keys.
+                const headlessContainer = document.getElementById("top-banner-headless-container");
+                if (!topBanner.isControl) {
+                  const imgUrl = topBanner.getImageProperty && topBanner.getImageProperty("image");
+                  const title = (topBanner.getStringProperty && topBanner.getStringProperty("title")) || "";
+                  const description = (topBanner.getStringProperty && topBanner.getStringProperty("description")) || "";
+                  const imgHtml = (imgUrl) ? "<img src='" + imgUrl + "' style='width:100%;height:auto'>" : "";
+                  const titleHtml = (title !== "") ? "<div class='Info_white' style='padding:8px 0;'><b>" + title + "</b></div>" : "";
+                  const descHtml = (description !== "") ? "<div class='Info_white' style='padding:4px 0;'>" + description + "</div>" : "";
+                  $("#top-banner-headless-container").empty();
+                  $("#top-banner-headless-container").append("<div class='Containers'><div class='MessageInfo'>Headless (placement: " + (topBanner.placementId || "top_banner") + ")</div>" + imgHtml + titleHtml + descHtml + "</div>");
+                  braze.logBannerImpressions([topBanner]);
+                  // Log click when user clicks the headless banner area
+                  $("#top-banner-headless-container").off("click.bannerHeadless").on("click.bannerHeadless", function () { braze.logBannerClick(topBanner); });
+                } else {
+                  headlessContainer.style.display = 'none';
+                }
               }
-              
           }
           else {
             $("#top-banner-container").empty();
+            $("#top-banner-headless-container").empty();
           }
       }
 

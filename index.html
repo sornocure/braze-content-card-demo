@@ -105,45 +105,48 @@
       <div class="col-xs-12" style="height:10px;"></div>
       <!-- End -- Spacer -->
 
-      <div class="row">
-        <!-- Top banner card -->
-        <div id="top-banner-container" style="max-height:300px;">
-        </div>    
-      </div>
-
-      <!-- Spacer -->
-      <div class="col-xs-12" style="height:20px;"></div>
-      <!-- End -- Spacer -->
-
-      <!-- 1-column -->
-      <div class="row">
-        <!--<div class="col-lg-10">-->
-        <!-- hero image carousel here-->
-        <div id="board" class="slideshow-container">
-
-          <!-- hero banner section here -->
-          
-        </div>
-        <br>
-
-        <!-- The circles/dots -->
-        <!--<div style="text-align:center">
-            <span class="dots" onclick="currentSlide(1)"></span>
-            <span class="dots" onclick="currentSlide(2)"></span>
-            <span class="dots" onclick="currentSlide(3)"></span>
-          </div>-->
-
-      </div>
-      <!-- End -- 1-column -->
-
-      <div class="row">
-        <div id="collapsible_banner" style="position: relative; text-align: center;">
+      <!-- Collapsible banner area: when "Show Banners" is off, this whole block is hidden; hero stays below -->
+      <div id="collapsible-banner-wrapper">
+        <!-- 1) Top banner (standard insertBanner) -->
+        <div class="row">
+          <div id="top-banner-container" style="max-height:300px;">
+          </div>
         </div>
       </div>
 
-
-      <div class="col-xs-12" style="height:10px;"></div>
-      <!-- End -- 1-column -->
+       <!-- Spacer -->
+       <div class="col-xs-12" style="height:20px;"></div>
+       <!-- End -- Spacer -->
+ 
+       <!-- 1-column -->
+       <div class="row">
+         <!--<div class="col-lg-10">-->
+         <!-- hero image carousel here-->
+         <div id="board" class="slideshow-container">
+ 
+           <!-- hero banner section here -->
+           
+         </div>
+         <br>
+ 
+         <!-- The circles/dots -->
+         <!--<div style="text-align:center">
+             <span class="dots" onclick="currentSlide(1)"></span>
+             <span class="dots" onclick="currentSlide(2)"></span>
+             <span class="dots" onclick="currentSlide(3)"></span>
+           </div>-->
+ 
+       </div>
+       <!-- End -- 1-column -->
+ 
+       <div class="row">
+         <div id="collapsible_banner" style="position: relative; text-align: center;">
+         </div>
+       </div>
+ 
+ 
+       <div class="col-xs-12" style="height:10px;"></div>
+       <!-- End -- 1-column -->
       
       <div class="row" >
         <div id="onboarding_header" ></div>
@@ -194,6 +197,14 @@
       <!-- Spacer -->
       <div class="col-xs-12" style="height:10px;"></div>
       <!-- End -- Spacer -->
+      <!-- Headless top banner (below 3 tiles; tile-style content in a full-width banner box; hidden when "Show Banners" is off) -->
+      <div id="top-banner-headless-wrapper">
+        <div class="col-xs-12" style="height:20px;"></div>
+        <div class="row">
+          <div id="top-banner-headless-container" class="headless-banner-box" style="width:100%; max-height:300px; min-height:120px; background-color:#eeeeee; overflow:hidden; display:flex; align-items:stretch;">
+          </div>
+        </div>
+      </div>
       <!-- Spacer -->
       <div class="col-xs-12" style="height:50px;"></div>
       <!-- End -- Spacer -->
@@ -205,6 +216,12 @@
 
 
   <script>
+      function escapeHtml(s) {
+        if (s == null) return "";
+        var div = document.createElement("div");
+        div.textContent = s;
+        return div.innerHTML;
+      }
       function render_the_cards(contentcard_objs) {
         BCards = contentcard_objs;
         let render = false;
@@ -213,7 +230,7 @@
         //This will be invoked every time the feed is successfully refreshed following a requestContentCardsRefresh() request
         //Here you can render the cards to the UI as well as logging impressions and clicks. You can check if the card is a Control here. 
         $("#board").empty();
-        $("#board").append("<div class='Containers'> <div class='MessageInfo'> 1/1 (image ratio: 3000 x 1200) </div><img src='./rs/wireframe_SX3000_.jpg' style='width:100%'><div class='Info'>location=hero</div> </div>");
+        $("#board").append("<div class='Containers'> <div class='MessageInfo'> 1/1 (image ratio: 3000 x 1200) </div><img src='./rs/wireframe_SX3000_.jpg' style='width:100%' alt='location=hero'><div class='Info'>location=hero</div> </div>");
         $("#collapsible_banner").empty();
         $("#onboarding_set").empty();
       
@@ -231,7 +248,7 @@
           }
           else {
             $("#recommendation_header").empty();
-            $("#recommendation_header").append("<p><h3>&nbsp;&nbsp;" + latest_tile1.extras.groupheader + "</h3></p>");
+            $("#recommendation_header").append("<p><h3>&nbsp;&nbsp;" + (latest_tile1.extras.groupheader != null ? latest_tile1.extras.groupheader : "") + "</h3></p>");
             $("#tile1").empty();
             $("#tile1").append("<p>&nbsp;</p>");
             $("#tile1").append("<div style='width: 280px;'>");
@@ -240,7 +257,7 @@
             $("#tile1").append("<a href='" + latest_tile1.url + "'><img class='img-fluid' src='" + latest_tile1.imageUrl + "'></a></label>");
             $("#tile1").append("<h4>" + latest_tile1.title + "</h4>");
             $("#tile1").append("<a href='" + latest_tile1.url + "'><p>" + latest_tile1.description + "</p></a>");
-            $("#tile1").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile1.extras.readmeter + "&nbsp;&nbsp;</div>");
+            $("#tile1").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile1.extras.readmeter != null ? latest_tile1.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
             $("#tile1").append("</div></div>");
             var viewedcards = [latest_tile1];
             braze.logContentCardImpressions(viewedcards);
@@ -267,7 +284,7 @@
           $("#tile2").append("<a href='" + latest_tile2.url + "'><img class='img-fluid' src='" + latest_tile2.imageUrl + "'></a></label>");
           $("#tile2").append("<h4>" + latest_tile2.title + "</h4>");
           $("#tile2").append("<a href='" + latest_tile2.url + "'><p>" + latest_tile2.description + "</p></a>");
-          $("#tile2").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile2.extras.readmeter + "&nbsp;&nbsp;</div>");
+          $("#tile2").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile2.extras.readmeter != null ? latest_tile2.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
           $("#tile2").append("</div></div>");
           var viewedcards = [latest_tile2];
           braze.logContentCardImpressions(viewedcards);
@@ -292,7 +309,7 @@
           $("#tile3").append("<a href='" + latest_tile3.url + "'><img class='img-fluid' src='" + latest_tile3.imageUrl + "'></a></label>");
           $("#tile3").append("<h4>" + latest_tile3.title + "</h4>");
           $("#tile3").append("<a href='" + latest_tile3.url + "'><p>" + latest_tile3.description + "</p></a>");
-          $("#tile3").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile3.extras.readmeter + "&nbsp;&nbsp;</div>");
+          $("#tile3").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile3.extras.readmeter != null ? latest_tile3.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
           $("#tile3").append("</div></div>");
           var viewedcards = [latest_tile3];
           braze.logContentCardImpressions(viewedcards);
@@ -345,25 +362,73 @@
 
 
       function render_the_banners(banner_objs) {
+          const wrapper = document.getElementById("collapsible-banner-wrapper");
+          const headlessWrapper = document.getElementById("top-banner-headless-wrapper");
+          if (!wrapper) return;
 
           if (localStorage.getItem("bannercard-switch") === 'true') {
+              wrapper.style.display = '';
+              if (headlessWrapper) headlessWrapper.style.display = '';
               $("#top-banner-container").empty();
               $("#top-banner-container").append("<div class='MessageInfo'>    1/1 (max-height: 300px) </div><img src='./rs/wireframe_banners2_1250x313.png' style='width:100%'>");
+
+              $("#top-banner-headless-container").empty();
+              $("#top-banner-headless-container").append("<div class='MessageInfo'>    1/1 headless (max-height: 300px) </div><img src='./rs/wireframe_banners2_1250x313.png' style='width:100%'>");
 
               // get this placement's banner. If it's `null` the user did not qualify for one.
               const topBanner = banner_objs["top_banner"];
               if (topBanner) {
-                // Insert the banner which replacees the innerHTML of that container
-                braze.insertBanner(topBanner, document.getElementById("top-banner-container"));
-                  // Special handling if the user is part of a Control Variant
-                  if (topBanner.isControl) {
-                    container.style.display = 'none';
-                  }     
+                // Standard render: insertBanner
+                const standardContainer = document.getElementById("top-banner-container");
+                braze.insertBanner(topBanner, standardContainer);
+                if (topBanner.isControl) {
+                  standardContainer.style.display = 'none';
+                }
+
+                // Headless render: tile-style (image + h4 + description) inside a full-width banner box.
+                // Supports string/image properties and optional JSON property (getJsonProperty); JSON can override or add content.
+                const headlessContainer = document.getElementById("top-banner-headless-container");
+                if (!topBanner.isControl) {
+                  let imgUrl = topBanner.getImageProperty && topBanner.getImageProperty("image");
+                  let title = (topBanner.getStringProperty && topBanner.getStringProperty("title")) || "";
+                  let description = (topBanner.getStringProperty && topBanner.getStringProperty("description")) || "";
+                  let url = (topBanner.getStringProperty && topBanner.getStringProperty("url")) || "";
+                  // If a property is sent as JSON, read it with getJsonProperty (key must match your Braze banner template).
+                  const jsonData = topBanner.getJsonProperty && topBanner.getJsonProperty("data");
+                  let jsonBlock = "";
+                  if (jsonData != null && typeof jsonData === "object") {
+                    if (jsonData.title != null) title = String(jsonData.title);
+                    if (jsonData.description != null) description = String(jsonData.description);
+                    if (jsonData.url != null) url = String(jsonData.url);
+                    if (jsonData.image != null) imgUrl = String(jsonData.image);
+                    if (jsonData.html != null && typeof jsonData.html === "string") {
+                      jsonBlock = "<div class='headless-banner-json-html' style='flex:1; padding:16px 20px;'>" + jsonData.html + "</div>";
+                    } else if (jsonData.body != null) {
+                      jsonBlock = "<div style='flex:1; padding:16px 20px; color:#333;'>" + escapeHtml(String(jsonData.body)) + "</div>";
+                    } else if (Object.keys(jsonData).length > 0 && !imgUrl && title === "" && description === "") {
+                      jsonBlock = "<pre style='flex:1; padding:16px 20px; margin:0; font-size:12px; overflow:auto;'>" + escapeHtml(JSON.stringify(jsonData, null, 2)) + "</pre>";
+                    }
+                  }
+                  const imgBlock = (imgUrl) ? "<div style='flex:0 0 auto; max-width:40%; max-height:300px; overflow:hidden;'><img class='img-fluid' src='" + escapeHtml(imgUrl) + "' style='width:auto; height:100%; max-height:300px; object-fit:cover; display:block;'></div>" : "";
+                  const contentBlock = jsonBlock || ("<div style='flex:1; padding:16px 20px; display:flex; flex-direction:column; justify-content:center;'>" +
+                    (title !== "" ? "<h4 style='margin:0 0 8px 0;'>" + escapeHtml(title) + "</h4>" : "") +
+                    (description !== "" ? "<p style='margin:0; color:#333;'>" + escapeHtml(description) + "</p>" : "") +
+                    "</div>");
+                  const inner = imgBlock + contentBlock;
+                  $("#top-banner-headless-container").empty();
+                  $("#top-banner-headless-container").append(url ? "<a href=\"" + escapeHtml(url) + "\" style='display:flex; width:100%; text-decoration:none; color:inherit;'>" + inner + "</a>" : "<div style='display:flex; width:100%;'>" + inner + "</div>");
+                  braze.logBannerImpressions([topBanner]);
+                  $("#top-banner-headless-container").off("click.bannerHeadless").on("click.bannerHeadless", function () { braze.logBannerClick(topBanner); });
+                } else {
+                  headlessContainer.style.display = 'none';
+                }
               }
-              
           }
           else {
+            wrapper.style.display = 'none';
+            if (headlessWrapper) headlessWrapper.style.display = 'none';
             $("#top-banner-container").empty();
+            $("#top-banner-headless-container").empty();
           }
       }
 

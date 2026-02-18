@@ -1,5 +1,10 @@
 * {box-sizing:border-box}
 
+/* Jumbotron (top bar): light purple so redeploy is obvious */
+.jumbotron {
+  background-color: #e0d5f0 !important;
+}
+
 /* Slideshow container */
 .slideshow-container {
   /*max-width: 1000px;*/

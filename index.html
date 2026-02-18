@@ -112,13 +112,6 @@
           <div id="top-banner-container" style="max-height:300px;">
           </div>
         </div>
-        <!-- Spacer -->
-        <div class="col-xs-12" style="height:20px;"></div>
-        <!-- 2) Headless top banner (image, title, description like content cards) -->
-        <div class="row">
-          <div id="top-banner-headless-container" style="max-height:300px;">
-          </div>
-        </div>
       </div>
 
        <!-- Spacer -->
@@ -204,6 +197,14 @@
       <!-- Spacer -->
       <div class="col-xs-12" style="height:10px;"></div>
       <!-- End -- Spacer -->
+      <!-- Headless top banner (below 3 tiles; hidden when "Show Banners" is off) -->
+      <div id="top-banner-headless-wrapper">
+        <div class="col-xs-12" style="height:20px;"></div>
+        <div class="row">
+          <div id="top-banner-headless-container" style="max-height:300px;">
+          </div>
+        </div>
+      </div>
       <!-- Spacer -->
       <div class="col-xs-12" style="height:50px;"></div>
       <!-- End -- Spacer -->
@@ -356,10 +357,12 @@
 
       function render_the_banners(banner_objs) {
           const wrapper = document.getElementById("collapsible-banner-wrapper");
+          const headlessWrapper = document.getElementById("top-banner-headless-wrapper");
           if (!wrapper) return;
 
           if (localStorage.getItem("bannercard-switch") === 'true') {
               wrapper.style.display = '';
+              if (headlessWrapper) headlessWrapper.style.display = '';
               $("#top-banner-container").empty();
               $("#top-banner-container").append("<div class='MessageInfo'>    1/1 (max-height: 300px) </div><img src='./rs/wireframe_banners2_1250x313.png' style='width:100%'>");
 
@@ -398,6 +401,7 @@
           }
           else {
             wrapper.style.display = 'none';
+            if (headlessWrapper) headlessWrapper.style.display = 'none';
             $("#top-banner-container").empty();
             $("#top-banner-headless-container").empty();
           }

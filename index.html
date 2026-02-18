@@ -242,7 +242,7 @@
           }
           else {
             $("#recommendation_header").empty();
-            $("#recommendation_header").append("<p><h3>&nbsp;&nbsp;" + latest_tile1.extras.groupheader + "</h3></p>");
+            $("#recommendation_header").append("<p><h3>&nbsp;&nbsp;" + (latest_tile1.extras.groupheader != null ? latest_tile1.extras.groupheader : "") + "</h3></p>");
             $("#tile1").empty();
             $("#tile1").append("<p>&nbsp;</p>");
             $("#tile1").append("<div style='width: 280px;'>");
@@ -251,7 +251,7 @@
             $("#tile1").append("<a href='" + latest_tile1.url + "'><img class='img-fluid' src='" + latest_tile1.imageUrl + "'></a></label>");
             $("#tile1").append("<h4>" + latest_tile1.title + "</h4>");
             $("#tile1").append("<a href='" + latest_tile1.url + "'><p>" + latest_tile1.description + "</p></a>");
-            $("#tile1").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile1.extras.readmeter + "&nbsp;&nbsp;</div>");
+            $("#tile1").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile1.extras.readmeter != null ? latest_tile1.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
             $("#tile1").append("</div></div>");
             var viewedcards = [latest_tile1];
             braze.logContentCardImpressions(viewedcards);
@@ -278,7 +278,7 @@
           $("#tile2").append("<a href='" + latest_tile2.url + "'><img class='img-fluid' src='" + latest_tile2.imageUrl + "'></a></label>");
           $("#tile2").append("<h4>" + latest_tile2.title + "</h4>");
           $("#tile2").append("<a href='" + latest_tile2.url + "'><p>" + latest_tile2.description + "</p></a>");
-          $("#tile2").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile2.extras.readmeter + "&nbsp;&nbsp;</div>");
+          $("#tile2").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile2.extras.readmeter != null ? latest_tile2.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
           $("#tile2").append("</div></div>");
           var viewedcards = [latest_tile2];
           braze.logContentCardImpressions(viewedcards);
@@ -303,7 +303,7 @@
           $("#tile3").append("<a href='" + latest_tile3.url + "'><img class='img-fluid' src='" + latest_tile3.imageUrl + "'></a></label>");
           $("#tile3").append("<h4>" + latest_tile3.title + "</h4>");
           $("#tile3").append("<a href='" + latest_tile3.url + "'><p>" + latest_tile3.description + "</p></a>");
-          $("#tile3").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + latest_tile3.extras.readmeter + "&nbsp;&nbsp;</div>");
+          $("#tile3").append("<div style='color:grey; padding-block: 4px; text-align: right;'>" + (latest_tile3.extras.readmeter != null ? latest_tile3.extras.readmeter : "") + "&nbsp;&nbsp;</div>");
           $("#tile3").append("</div></div>");
           var viewedcards = [latest_tile3];
           braze.logContentCardImpressions(viewedcards);

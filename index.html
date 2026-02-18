@@ -216,6 +216,12 @@
 
 
   <script>
+      function escapeHtml(s) {
+        if (s == null) return "";
+        var div = document.createElement("div");
+        div.textContent = s;
+        return div.innerHTML;
+      }
       function render_the_cards(contentcard_objs) {
         BCards = contentcard_objs;
         let render = false;
@@ -379,21 +385,38 @@
                   standardContainer.style.display = 'none';
                 }
 
-                // Headless render: tile-style (image + h4 + description) inside a full-width banner box; same property keys as your Braze banner.
+                // Headless render: tile-style (image + h4 + description) inside a full-width banner box.
+                // Supports string/image properties and optional JSON property (getJsonProperty); JSON can override or add content.
                 const headlessContainer = document.getElementById("top-banner-headless-container");
                 if (!topBanner.isControl) {
-                  const imgUrl = topBanner.getImageProperty && topBanner.getImageProperty("image");
-                  const title = (topBanner.getStringProperty && topBanner.getStringProperty("title")) || "";
-                  const description = (topBanner.getStringProperty && topBanner.getStringProperty("description")) || "";
-                  const url = (topBanner.getStringProperty && topBanner.getStringProperty("url")) || "";
-                  const imgBlock = (imgUrl) ? "<div style='flex:0 0 auto; max-width:40%; max-height:300px; overflow:hidden;'><img class='img-fluid' src='" + imgUrl + "' style='width:auto; height:100%; max-height:300px; object-fit:cover; display:block;'></div>" : "";
-                  const contentBlock = "<div style='flex:1; padding:16px 20px; display:flex; flex-direction:column; justify-content:center;'>" +
-                    (title !== "" ? "<h4 style='margin:0 0 8px 0;'>" + title + "</h4>" : "") +
-                    (description !== "" ? "<p style='margin:0; color:#333;'>" + description + "</p>" : "") +
-                    "</div>";
+                  let imgUrl = topBanner.getImageProperty && topBanner.getImageProperty("image");
+                  let title = (topBanner.getStringProperty && topBanner.getStringProperty("title")) || "";
+                  let description = (topBanner.getStringProperty && topBanner.getStringProperty("description")) || "";
+                  let url = (topBanner.getStringProperty && topBanner.getStringProperty("url")) || "";
+                  // If a property is sent as JSON, read it with getJsonProperty (key must match your Braze banner template).
+                  const jsonData = topBanner.getJsonProperty && topBanner.getJsonProperty("data");
+                  let jsonBlock = "";
+                  if (jsonData != null && typeof jsonData === "object") {
+                    if (jsonData.title != null) title = String(jsonData.title);
+                    if (jsonData.description != null) description = String(jsonData.description);
+                    if (jsonData.url != null) url = String(jsonData.url);
+                    if (jsonData.image != null) imgUrl = String(jsonData.image);
+                    if (jsonData.html != null && typeof jsonData.html === "string") {
+                      jsonBlock = "<div class='headless-banner-json-html' style='flex:1; padding:16px 20px;'>" + jsonData.html + "</div>";
+                    } else if (jsonData.body != null) {
+                      jsonBlock = "<div style='flex:1; padding:16px 20px; color:#333;'>" + escapeHtml(String(jsonData.body)) + "</div>";
+                    } else if (Object.keys(jsonData).length > 0 && !imgUrl && title === "" && description === "") {
+                      jsonBlock = "<pre style='flex:1; padding:16px 20px; margin:0; font-size:12px; overflow:auto;'>" + escapeHtml(JSON.stringify(jsonData, null, 2)) + "</pre>";
+                    }
+                  }
+                  const imgBlock = (imgUrl) ? "<div style='flex:0 0 auto; max-width:40%; max-height:300px; overflow:hidden;'><img class='img-fluid' src='" + escapeHtml(imgUrl) + "' style='width:auto; height:100%; max-height:300px; object-fit:cover; display:block;'></div>" : "";
+                  const contentBlock = jsonBlock || ("<div style='flex:1; padding:16px 20px; display:flex; flex-direction:column; justify-content:center;'>" +
+                    (title !== "" ? "<h4 style='margin:0 0 8px 0;'>" + escapeHtml(title) + "</h4>" : "") +
+                    (description !== "" ? "<p style='margin:0; color:#333;'>" + escapeHtml(description) + "</p>" : "") +
+                    "</div>");
                   const inner = imgBlock + contentBlock;
                   $("#top-banner-headless-container").empty();
-                  $("#top-banner-headless-container").append(url ? "<a href='" + url + "' style='display:flex; width:100%; text-decoration:none; color:inherit;'>" + inner + "</a>" : "<div style='display:flex; width:100%;'>" + inner + "</div>");
+                  $("#top-banner-headless-container").append(url ? "<a href=\"" + escapeHtml(url) + "\" style='display:flex; width:100%; text-decoration:none; color:inherit;'>" + inner + "</a>" : "<div style='display:flex; width:100%;'>" + inner + "</div>");
                   braze.logBannerImpressions([topBanner]);
                   $("#top-banner-headless-container").off("click.bannerHeadless").on("click.bannerHeadless", function () { braze.logBannerClick(topBanner); });
                 } else {

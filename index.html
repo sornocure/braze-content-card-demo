@@ -197,11 +197,11 @@
       <!-- Spacer -->
       <div class="col-xs-12" style="height:10px;"></div>
       <!-- End -- Spacer -->
-      <!-- Headless top banner (below 3 tiles; hidden when "Show Banners" is off) -->
+      <!-- Headless top banner (below 3 tiles; tile-style content in a full-width banner box; hidden when "Show Banners" is off) -->
       <div id="top-banner-headless-wrapper">
         <div class="col-xs-12" style="height:20px;"></div>
         <div class="row">
-          <div id="top-banner-headless-container" style="max-height:300px;">
+          <div id="top-banner-headless-container" class="headless-banner-box" style="width:100%; max-height:300px; min-height:120px; background-color:#eeeeee; overflow:hidden; display:flex; align-items:stretch;">
           </div>
         </div>
       </div>
@@ -379,20 +379,22 @@
                   standardContainer.style.display = 'none';
                 }
 
-                // Headless render: use Banner property methods (image, title, description) like content cards
-                // Property keys depend on your Braze dashboard; adjust if you use different keys.
+                // Headless render: tile-style (image + h4 + description) inside a full-width banner box; same property keys as your Braze banner.
                 const headlessContainer = document.getElementById("top-banner-headless-container");
                 if (!topBanner.isControl) {
                   const imgUrl = topBanner.getImageProperty && topBanner.getImageProperty("image");
                   const title = (topBanner.getStringProperty && topBanner.getStringProperty("title")) || "";
                   const description = (topBanner.getStringProperty && topBanner.getStringProperty("description")) || "";
-                  const imgHtml = (imgUrl) ? "<img src='" + imgUrl + "' style='width:100%;height:auto'>" : "";
-                  const titleHtml = (title !== "") ? "<div class='Info_white' style='padding:8px 0;'><b>" + title + "</b></div>" : "";
-                  const descHtml = (description !== "") ? "<div class='Info_white' style='padding:4px 0;'>" + description + "</div>" : "";
+                  const url = (topBanner.getStringProperty && topBanner.getStringProperty("url")) || "";
+                  const imgBlock = (imgUrl) ? "<div style='flex:0 0 auto; max-width:40%; max-height:300px; overflow:hidden;'><img class='img-fluid' src='" + imgUrl + "' style='width:auto; height:100%; max-height:300px; object-fit:cover; display:block;'></div>" : "";
+                  const contentBlock = "<div style='flex:1; padding:16px 20px; display:flex; flex-direction:column; justify-content:center;'>" +
+                    (title !== "" ? "<h4 style='margin:0 0 8px 0;'>" + title + "</h4>" : "") +
+                    (description !== "" ? "<p style='margin:0; color:#333;'>" + description + "</p>" : "") +
+                    "</div>";
+                  const inner = imgBlock + contentBlock;
                   $("#top-banner-headless-container").empty();
-                  $("#top-banner-headless-container").append("<div class='Containers'><div class='MessageInfo'>Headless (placement: " + (topBanner.placementId || "top_banner") + ")</div>" + imgHtml + titleHtml + descHtml + "</div>");
+                  $("#top-banner-headless-container").append(url ? "<a href='" + url + "' style='display:flex; width:100%; text-decoration:none; color:inherit;'>" + inner + "</a>" : "<div style='display:flex; width:100%;'>" + inner + "</div>");
                   braze.logBannerImpressions([topBanner]);
-                  // Log click when user clicks the headless banner area
                   $("#top-banner-headless-container").off("click.bannerHeadless").on("click.bannerHeadless", function () { braze.logBannerClick(topBanner); });
                 } else {
                   headlessContainer.style.display = 'none';
